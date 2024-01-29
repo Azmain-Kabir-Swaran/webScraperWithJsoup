@@ -16,21 +16,21 @@ public class Extractor {
         String role, name, email;
         List<Chair> chairs = new ArrayList<>();
 
-        Connection connection = Jsoup.connect("https://www.ualberta.ca/computing-science/faculty-and-staff/index.html");
+        Connection connection = Jsoup.connect(url);
         Document document = connection.get();
 
-        Elements Chairs = document.getElementsByTag("tr");
-        for (Element Chair : Chairs) {
+        Elements rows = document.getElementsByTag("tr");
+        for (Element row : rows) {
 
-            Elements td0 = Chair.getElementsByAttribute("Style");
-            Elements td1 = Chair.getElementsByTag("strong");
-            Elements td2 = Chair.getElementsByAttribute("href");
-            String Role = td0.text().trim();
-            if (Role.contains("Chair")){
+            Elements td0 = row.getElementsByAttribute("Style");
+            Elements td1 = row.getElementsByTag("strong");
+            Elements td2 = row.getElementsByAttribute("href");
+            role = td0.text().trim();
+            if (role.contains("Chair")){
 
-                String Name = td1.text().trim();
-                String Email = td2.text().trim();
-                Chair chair = new Chair(Name, Role, Email);
+                name = td1.text().trim();
+                email = td2.text().trim();
+                Chair chair = new Chair(name, role, email);
 
                 chairs.add(chair);
             }
@@ -43,21 +43,21 @@ public class Extractor {
 
         List<ResearchLab> researchLabs = new ArrayList<>();
 
-        Connection connection = Jsoup.connect("https://www.ualberta.ca/computing-science/research/index.html");
+        Connection connection = Jsoup.connect(url);
         Document document = connection.get();
 
         Elements Labs = document.getElementsByTag("a");
 
 
         for (Element Lab : Labs) {
-            String LabName = Lab.text().trim();
-            String LabLink = Lab.attr("abs:href");
+            String labName = Lab.text().trim();
+            String labLink = Lab.attr("abs:href");
 
             String Prefix = "https://www.ualberta.ca/computing-science/research/research-areas/";
 
-            if (LabLink.startsWith(Prefix)) {
+            if (labLink.startsWith(Prefix) && !labLink.contains("index")) {
 
-                ResearchLab researchLab = new ResearchLab(LabName, LabLink);
+                ResearchLab researchLab = new ResearchLab(labName, labLink);
 
                 researchLabs.add(researchLab);
             }
